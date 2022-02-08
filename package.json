@@ -1,14 +1,14 @@
 {
-  "name": "pggeo",
+  "name": "gps-file-converter",
   "version": "1.0.0",
-  "description": "",
+  "description": "Imports and exports: Garmin .gpx, Google Maps .kml, GeoJSON and PlaceGaze .pgt",
+  "author": "Peter Herber",
+  "license": "ISC",
   "main": "index.js",
   "scripts": {
     "test": "nodemon test.js",
     "debug": "node test.js"
   },
-  "author": "Peter Herber",
-  "license": "ISC",
   "devDependencies": {
     "nodemon": "^2.0.15"
   },

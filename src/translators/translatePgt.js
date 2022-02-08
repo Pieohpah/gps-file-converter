@@ -13,6 +13,22 @@ const pgtFromModel = (model, compressed) => {
     return JSON.stringify(m,'',2)
 }
 
+const parsePGT = async(str) => {
+    return new Promise((resolve, reject) =>{
+console.log('Toodles')
+    })
+}
+
+const parsePGTZ = async(str) => {
+    return new Promise((resolve, reject) =>{
+console.log('Toodles')
+    })
+}
+
+
+
 module.exports = {
-    pgtFromModel
+    pgtFromModel,
+    parsePGT,
+    parsePGTZ
 }

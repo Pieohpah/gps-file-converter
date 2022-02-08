@@ -22,6 +22,7 @@ const PGGeoTrack = {
     points:[]
 }
 const PGGeoModel = {
+    type:'pgt',
     name: '',
     desc: '',
     link: {

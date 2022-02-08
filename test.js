@@ -1,23 +1,25 @@
-const PGGeo = require('./PGGeo')
-const pg = new PGGeo()
-const model = require('./models/PGGeoModel')
-const tpg = require('./translators/translatePgt')
+const GFC = require('./gps-file-converter')
+const geo = new GFC()
+const model = require('./src/models/PGGeoModel')
+const tpg = require('./src/translators/translatePgt')
+const ft = require('./src/helpers/fileinfo')
 
-const xmlTool = require('./helpers/xml')
+const xmlTool = require('./src/helpers/xml')
 
-const t = () => {
-    let s = xmlTool.commentString('Kalle Koala')
+const t = async() => {
+    //let s = xmlTool.commentString('Kalle Koala')
     //console.log(s)
-    s = xmlTool.deCommentString(s)
+    //s = xmlTool.deCommentString(s)
     //console.log(s)
 
-    pg.importGPX('./Files/SW.gpx') // eller pg.parseGPX om man har strängen
-    .then((c) => {
-        //console.log(pg.getContent())
+    geo.importGeoFile('./Files/out/bike.zip') // eller pg.parseGPX om man har strängen ./Files/S.gpx ./Files/out/ralle2.pgt
+    .then(async(c) => {
+        console.log(c)
+        //console.log(geo.getDataType())
         //let tps = pg.getContent().tracks.points
         //let pgt = tpg.pgtFromModel(pg.getContent(),true)
         //console.log(pgt)
-        pg.exportPGTZ('./Files/out/ralle2.zip')
+        geo.exportPGTZ('./Files/out/bike.zip')
         /*
         let compressed = model.compressPointArray(tps)
         //console.log(compressed)
