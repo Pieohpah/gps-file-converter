@@ -1,6 +1,8 @@
 const fs = require('fs').promises
 const transGpx = require('./src/translators/translateGpx')
 const transPgt = require('./src/translators/translatePgt')
+const transKml = require('./src/translators/translateKml')
+const transGeo = require('./src/translators/translateGeoJSON')
 const admzip = require('adm-zip')
 const path = require('path')
 const fi = require('./src/helpers/fileinfo')
@@ -15,7 +17,7 @@ const importFile = async (filePath, handler) => {
         filename_extension = path.extname(filePath)
         getFileContent(filePath)
         .then(c => {
-            filetype = fi.lookupFileType(c)
+            filetype = fi.getFileData(c, filename_extension)
             handler(c).then(() => {
                 return resolve()
             })
@@ -60,27 +62,32 @@ class PGGeo {
             filename_extension = path.extname(filePath)
             getFileContent(filePath)
             .then(c => {
-                const fileinfo = fi.getFileData(c)
+                const fileinfo = fi.getFileData(c, filename_extension)
                 filetype = {
                     ext: fileinfo.ext,
                     desc: fileinfo.desc,
                     format:fileinfo.format,
                 }
-                console.log(filetype)
+                //console.log(filetype)
                 let handler = undefined
 
                 switch(fileinfo.ext) {
                     case 'gpx': handler = this.parseGPX
                         break
+                    case 'kml': handler = this.parseKML
+                        break
                     case 'pgt': handler = this.parsePGT
                         break
+                    case 'pgtz':
                     case 'zip': handler = this.parsePGTZ  
+                        break
+                    case 'json': handler = this.parseGeoJSON
                         break  
                     default:
                         return reject(`No handler available for filetype ${fileinfo.ext}`)
                         
                 }
-                handler(fileinfo.data).then(() => {
+                return handler(fileinfo.data).then(() => {
                     return resolve({
                         ...filetype,
                         filename_ext: filename_extension
@@ -89,23 +96,69 @@ class PGGeo {
             })
             .catch(e => {return reject(e)})
         })
-        
+    }
+
+    stringify = async (type) => {
+        return new Promise((resolve, reject) => {
+            let handler = undefined
+            switch(type) {
+                case 'gpx': handler = transGpx || undefined
+                    break
+                case 'kml': handler = transKml || undefined
+                    break
+                case 'pgt': handler = transPgt || undefined
+                    break
+                case 'json': handler = transGeo || undefined
+                    break  
+                default:
+                    return reject(`No handler available for stringify to format '${type}'`)    
+            }
+            if(handler && handler.dataFromModel){
+                const data = handler.dataFromModel(content)
+                return resolve(data)
+            } 
+            return reject(`Handler for stringify to format '${type}' not implemented`)
+        })   
     }
     
     // Garmin GPX files
     importGPX = async (filePath) => {
         return importFile(filePath,this.parseGPX)
     }
-    parseGPX = async(str) => {
-        transGpx.parseGPX(str)
-        .then(data => {
-            content = data
+    parseGPX = async (data) => {
+        return transGpx.parseData(data)
+        .then(d => {
+            content = d
         })
     }
 
     // Google KLM files
     importKML = (filePath) => {
-        console.log(filePath)
+        return importFile(filePath,this.parseKML)
+    }
+
+    parseKML = async (data) => {
+        return transKml.parseData(data)
+        .then(d => {
+            content = d
+        })
+    }
+
+    // GeoJSON
+    importGeoJSON = (filePath) => {
+        return importFile(filePath,this.parseGeoJSON)
+    }
+
+    parseGeoJSON = async (data) => {
+        return transGeo.parseData(data)
+        .then(d => {
+            content = d
+        })
+    }
+
+    exportGeoJSON = (filePath) => {
+        let c = transGeo.dataFromModel(content)
+        return exportFile(filePath,c)
     }
 
     // PlaceGaze files
@@ -116,20 +169,26 @@ class PGGeo {
     importPGTZ = (filePath) => {
         console.log(filePath)
     }
-    parsePGT = async(str) => {
-        return transPgt.parsePGT(str)
+    parsePGT = async(data) => {
+        return transPgt.parseData(data)
+        .then(d => {
+            content = d
+        })
     }
-    parsePGTZ = async(str) => {
-        return transPgt.parsePGTZ(str)
+    parsePGTZ = async(data) => {
+        return transPgt.parsePGTZ(data)
+        .then(d => {
+            content = d
+        })
     }
 
     exportPGT = (filePath) => {
-        let c = transPgt.pgtFromModel(content,true)
+        let c = transPgt.dataFromModel(content,true)
         return exportFile(filePath,c)
     }
     exportPGTZ = (filePath) => {
         let fname = path.basename(filePath.toLowerCase(),'.zip') + '.pgt'
-        let c = transPgt.pgtFromModel(content,true)
+        let c = transPgt.dataFromModel(content,true)
         return exportFileCompressed(filePath,fname,c)
     }
     
@@ -143,7 +202,6 @@ class PGGeo {
             filename_ext: filename_extension
         }
     }
-
 }
 
 

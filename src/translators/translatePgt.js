@@ -1,7 +1,8 @@
+const admzip = require('adm-zip')
 const common = require('../helpers/common')
 const pgmodel = require('../models/PGGeoModel')
 
-const pgtFromModel = (model, compressed) => {
+const dataFromModel = (model, compressed) => {
     let m = common.deepCopy(model)
     if(compressed){
         let tps = m.tracks ? m.tracks.points : undefined
@@ -13,22 +14,31 @@ const pgtFromModel = (model, compressed) => {
     return JSON.stringify(m,'',2)
 }
 
-const parsePGT = async(str) => {
+const parseData = async(data) => {
     return new Promise((resolve, reject) =>{
-console.log('Toodles')
+        let gpsContent = undefined
+        if(typeof data === 'string'){
+            const options = {
+                ignoreAttributes : false
+            }
+            gpsContent = JSON.parse(data)
+        } else {
+            gpsContent = data
+        }
+        if(gpsContent) {
+            let compressedTrackPoints = gpsContent.tracks.points
+            if(compressedTrackPoints) {
+                let dec = pgmodel.deCompressPointArray(compressedTrackPoints)
+                gpsContent.tracks.points = dec
+            }            
+            return resolve(gpsContent)
+        }  else {
+            return reject('Data could not be parsed')
+        }  
     })
 }
-
-const parsePGTZ = async(str) => {
-    return new Promise((resolve, reject) =>{
-console.log('Toodles')
-    })
-}
-
-
 
 module.exports = {
-    pgtFromModel,
-    parsePGT,
-    parsePGTZ
+    dataFromModel,
+    parseData,
 }

@@ -14,7 +14,9 @@ const PGGeoPointModel = [] // [59.30275, 18.10375,10,null] lat, lon, elevation?,
 const PGGeoWaypoint = {
     name:'',
     desc:'',
-    point:''
+    point:'',
+    type: '',
+
 }
 const PGGeoTrack = {
     name:'',
@@ -23,6 +25,7 @@ const PGGeoTrack = {
 }
 const PGGeoModel = {
     type:'pgt',
+    version: '1.0.0',
     name: '',
     desc: '',
     link: {
@@ -31,13 +34,7 @@ const PGGeoModel = {
     },
     timestamp: '',
     waypoints:[],
-    tracks:[
-        {
-            name:'',
-            desc:'',
-            points:[]
-        }    
-    ]
+    tracks:[]
 }
 
 const newGeoModel = () => {
@@ -107,7 +104,45 @@ const PGGeoFromGPX = (gO) => {
     if(gO.trk) {
         let ts = newGeoTrack(gO.trk.name, gO.trk.desc, [])
         gO.trk.trkseg.trkpt.forEach(t => {
+            //console.log(t)
             let tr = newGeoPoint(t['@_lat'],t['@_lon'],t.ele)
+            ts.points.push(tr)
+        })
+        m.tracks = ts
+    } else {
+        delete m.tracks
+    }
+
+    return m
+}
+
+const PGGeoFromKML = (gO) => {
+    gO = gO.kml.Document
+    let m = newGeoModel()
+    //console.log(gO)
+    m.name = gO.Placemark.name
+    m.desc = gO.Placemark.description
+    delete m.timestamp
+    
+    // Waypoints 
+    //TODO: later
+    if(gO.wpt){
+        gO.wpt.forEach(e => {
+            let p = newGeoPoint(e['@_lat'],e['@_lon'],e.ele,new Date(e.time).getTime())
+            let wp = newGeoWaypoint(e.name,undefined,p)
+            m.waypoints.push(wp)
+        })
+    } else {
+        delete m.waypoints
+    }
+
+    // Tracks
+    if(gO.Placemark.LineString) {
+        //console.log(gO.Placemark.LineString.coordinates)
+        let ts = newGeoTrack(m.name, m.desc, [])
+        gO.Placemark.LineString.coordinates.split('\n').forEach(t => {
+            let tp = t.split(',')
+            let tr = newGeoPoint(tp[0],tp[1],tp[2])
             ts.points.push(tr)
         })
         m.tracks = ts
@@ -186,6 +221,7 @@ const deCompressPointArray = (compressedPoints) =>  {
 
 module.exports = {
     PGGeoFromGPX,
+    PGGeoFromKML,
     newGeoModel,
     newGeoWaypoint,
     newGeoTrack,

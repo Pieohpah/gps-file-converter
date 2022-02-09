@@ -12,14 +12,14 @@ const t = async() => {
     //s = xmlTool.deCommentString(s)
     //console.log(s)
 
-    geo.importGeoFile('./Files/out/bike.zip') // eller pg.parseGPX om man har strängen ./Files/S.gpx ./Files/out/ralle2.pgt
+    geo.importGeoFile('./Files/S.gpx') // eller pg.parseGPX om man har strängen ./Files/S.gpx ./Files/out/ralle2.pgt
     .then(async(c) => {
-        console.log(c)
-        //console.log(geo.getDataType())
+        //console.log(c)
+        //console.log(await geo.stringify('json'))
         //let tps = pg.getContent().tracks.points
         //let pgt = tpg.pgtFromModel(pg.getContent(),true)
         //console.log(pgt)
-        geo.exportPGTZ('./Files/out/bike.zip')
+        geo.exportGeoJSON('./Files/out/bike.json')
         /*
         let compressed = model.compressPointArray(tps)
         //console.log(compressed)

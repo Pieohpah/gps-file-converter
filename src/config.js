@@ -17,28 +17,7 @@ const config = {
         version: '1.0.0'
     },
     gpx: gpx_meta,
-    filetypes: {
-        gpx:{
-            ext:'gpx',
-            desc: 'GPS Exchange Format'
-        },
-        kml: {
-            ext:'kml',
-            desc: 'Keyhole Markup Language'
-        },
-        pgt: {
-            ext:'pgt',
-            desc: 'PlaceGaze Trails'
-        },
-        geojson: {
-            ext:'json',
-            desc: 'GeoJSON'
-        },
-        zip: {
-            ext: 'zip',
-            desc: 'Zip Archive'
-        }
-    }
+    
 }
 
 module.exports = config
