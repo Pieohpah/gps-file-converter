@@ -26,7 +26,7 @@ const importFile = async (filePath, handler) => {
     })
 }
 
-getFileContent = async (filePath) => {
+const getFileContent = async (filePath) => {
     return new Promise((resolve, reject) =>{
         fs.readFile(filePath)
         .then((c) => {
@@ -131,6 +131,10 @@ class PGGeo {
             content = d
         })
     }
+    exportGPX = (filePath) => {
+        let c = transGpx.dataFromModel(content)
+        return exportFile(filePath, c)
+    }
 
     // Google KLM files
     importKML = (filePath) => {
@@ -142,6 +146,10 @@ class PGGeo {
         .then(d => {
             content = d
         })
+    }
+    exportKML = (filePath) => {
+        let c = transKml.dataFromModel(content)
+        return exportFile(filePath, c)
     }
 
     // GeoJSON
@@ -158,7 +166,7 @@ class PGGeo {
 
     exportGeoJSON = (filePath) => {
         let c = transGeo.dataFromModel(content)
-        return exportFile(filePath,c)
+        return exportFile(filePath, c)
     }
 
     // PlaceGaze files
@@ -183,13 +191,13 @@ class PGGeo {
     }
 
     exportPGT = (filePath) => {
-        let c = transPgt.dataFromModel(content,true)
-        return exportFile(filePath,c)
+        let c = transPgt.dataFromModel(content, true)
+        return exportFile(filePath, c)
     }
     exportPGTZ = (filePath) => {
         let fname = path.basename(filePath.toLowerCase(),'.zip') + '.pgt'
-        let c = transPgt.dataFromModel(content,true)
-        return exportFileCompressed(filePath,fname,c)
+        let c = transPgt.dataFromModel(content, true)
+        return exportFileCompressed(filePath, fname, c)
     }
     
     getContent = () => {

@@ -1,8 +1,12 @@
 const { XMLParser, XMLBuilder, XMLValidator} = require('fast-xml-parser')
+const kmlmod = require('../models/KMLModel')
 const mod = require('../models/PGGeoModel')
+const common = require('../helpers/common')
 
 const dataFromModel = (model) => {
+    let ret = kmlmod.newKmlModel()
 
+    return common.XMLFromObj(ret)
 }
 
 const parseData = async(data) => {

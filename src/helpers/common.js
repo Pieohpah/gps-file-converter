@@ -1,5 +1,6 @@
 const crypto = require('crypto')
 const Readable = require('stream').Readable
+const { XMLParser, XMLBuilder, XMLValidator} = require('fast-xml-parser')
 
 const deepCopy = (obj) => {
     let ret = JSON.parse(JSON.stringify(obj))
@@ -51,11 +52,48 @@ const asyncForEach = async (array, handlerfunction) => {
         return reject(`asyncForEach got no array`)
       } 
     })
-  }
+}
+
+const XMLFromObj = (obj, nodeName, wrapperName, forceXML) => {
+    const XMLHeader = '<?xml version="1.0" encoding="utf-8"?>\n'
+    const options = {
+        ignoreAttributes : false,
+        format: true,
+        htmlEntities: true
+    }
+    if(nodeName) {
+        options.arrayNodeName = nodeName
+    }
+
+    const xb = new XMLBuilder(options)
+    let xmlRet = xb.build(obj)
+
+    if(wrapperName) {
+        const xp = new XMLParser()
+        let jObj = xp.parse(xmlRet)
+        let addObj = {}
+        addObj[wrapperName] = jObj
+        xmlRet = xb.build(addObj)
+    }
+
+    if(xmlRet.startsWith('<?xml></?xml>')) {
+        xmlRet = xmlRet.replace('<?xml></?xml>', XMLHeader)
+    }
+    if(forceXML && !xmlRet.startsWith('<?xml ')) {
+        xmlRet = XMLHeader + xmlRet
+    }
+    xmlRet = xmlRet.replace(/'&amp;amp;'/g, '&') 
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    return xmlRet
+}
 
 module.exports = {
     deepCopy,
     zeroFill,
     getFileHash,
-    asyncForEach
+    asyncForEach,
+    XMLFromObj
 }

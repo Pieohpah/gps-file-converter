@@ -10,6 +10,10 @@ const gpx_meta = {
     elementFormDefault:"qualified"
 }
 
+const kml_meta = {
+    xmlns:"http://earth.google.com/kml/2.1"
+}
+
 
 const config = {
     program:{
@@ -17,7 +21,7 @@ const config = {
         version: '1.0.0'
     },
     gpx: gpx_meta,
-    
+    kml: kml_meta
 }
 
 module.exports = config

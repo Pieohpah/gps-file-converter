@@ -22,7 +22,7 @@ const dataFromModel = (model) => {
                 }
             }
             //console.log(w)
-            features.push[w]
+            features.push(w)
         })
     }
     if(model.tracks) {
