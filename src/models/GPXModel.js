@@ -1,6 +1,14 @@
 const common = require('../helpers/common') 
 const config = require('../config')
 
+const GpxTrack = {
+    name:'',
+    desc:'',
+    trkseg: {
+        trkpt: []
+    }
+}
+
 const GpxTrackPoint = {
         ele:''
 }
@@ -24,13 +32,7 @@ const GpxModel = {
             link:{},
             time:''
         },
-        trk: {
-            name:'',
-            desc:'',
-            trkseg: {
-                trkpt: []
-            }
-        },
+        trk: [],
         wpt:[]
     }
 }
@@ -49,11 +51,24 @@ const newTrackPoint = (lat, lon, ele) => {
     let pt = common.deepCopy(GpxTrackPoint)
     pt['@_lat'] = lat
     pt['@_lon'] = lon
+
     if(ele) {
         pt.ele = ele
+    } else {
+        delete pt.ele
     }
     return pt
 }
+
+const newTrack = (name, desc, points) => {
+    let ret = common.deepCopy(GpxTrack)
+    ret.name = name
+    ret.desc = desc
+    ret.trkseg.trkpt = points
+
+    return ret
+}
+
 const newWayPoint = (lat, lon, ele, name, time, sym) => {
     if(!sym) {
         sym = 'Flag, Orange'
@@ -84,6 +99,7 @@ module.exports = {
     newGpxModel,
     newTrackPoint,
     newWayPoint,
+    newTrack,
     newLink,
     toXML
 }

@@ -28,14 +28,16 @@ const t = async() => {
     //s = xmlTool.deCommentString(s)
     //console.log(s)
 
-    geo.importGeoFile('./Files/S.gpx') // eller pg.parseGPX om man har strängen ./Files/S.gpx ./Files/out/ralle2.pgt
+    geo.importGeoFile('./Files/Tallborgen.gpx') // eller pg.parseGPX om man har strängen ./Files/S.gpx ./Files/out/ralle2.pgt
     .then(async(c) => {
-        //console.log(c)
+        console.log(c)
         //console.log(await geo.stringify('gpx'))
         //let tps = pg.getContent().tracks.points
         //let pgt = tpg.pgtFromModel(pg.getContent(),true)
-        //console.log(pgt)
-        geo.exportKML('./Files/out/test.kml')
+        console.log(geo.getContent())
+        //geo.exportPGT('./Files/out/tall.pgt')
+        geo.exportGPX('./Files/out/tall.gpx')
+        //geo.exportKML('./Files/out/tall.kml')
         /*
         let compressed = model.compressPointArray(tps)
         //console.log(compressed)

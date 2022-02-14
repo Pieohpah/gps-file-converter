@@ -11,7 +11,13 @@ const gpx_meta = {
 }
 
 const kml_meta = {
-    xmlns:"http://earth.google.com/kml/2.1"
+    default: {
+        LineStyleId: 'lineStyle',
+        LineStyle: {
+            color: '99FF00',
+            width: 4
+        }
+    }
 }
 
 

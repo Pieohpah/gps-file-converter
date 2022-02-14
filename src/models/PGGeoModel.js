@@ -21,6 +21,7 @@ const PGGeoWaypoint = {
 const PGGeoTrack = {
     name:'',
     desc:'',
+    ordinal:0,
     points:[]
 }
 const PGGeoModel = {
@@ -63,10 +64,11 @@ const newGeoWaypoint = (name, desc, geopoint) => {
     return ret
 }
 
-const newGeoTrack = (name, desc, geopoints) => {
+const newGeoTrack = (name, desc, geopoints, ordinal) => {
     let ret = common.deepCopy(PGGeoTrack)
     ret.name = name
-    ret.desc = desc
+    ret.desc = desc || ''
+    ret.ordinal = ordinal || 0
     ret.points = geopoints
     return ret
 }
@@ -102,13 +104,19 @@ const PGGeoFromGPX = (gO) => {
 
     // Tracks
     if(gO.trk) {
-        let ts = newGeoTrack(gO.trk.name, gO.trk.desc, [])
-        gO.trk.trkseg.trkpt.forEach(t => {
-            //console.log(t)
-            let tr = newGeoPoint(t['@_lat'],t['@_lon'],t.ele)
-            ts.points.push(tr)
+        let ord = 1
+        gO.trk.forEach(trk => {
+            let ts = newGeoTrack(trk.name, trk.desc, [], ord)
+            //console.log({tr:trk})
+            trk.trkseg.trkpt.forEach(t => {
+                //console.log(t)
+                let tr = newGeoPoint(t['@_lat'],t['@_lon'],t.ele)
+                ts.points.push(tr)
+            })
+            m.tracks.push(ts)
+            ord += 1
         })
-        m.tracks = ts
+        
     } else {
         delete m.tracks
     }
@@ -139,13 +147,14 @@ const PGGeoFromKML = (gO) => {
     // Tracks
     if(gO.Placemark.LineString) {
         //console.log(gO.Placemark.LineString.coordinates)
+        //TODO: forEach
         let ts = newGeoTrack(m.name, m.desc, [])
         gO.Placemark.LineString.coordinates.split('\n').forEach(t => {
             let tp = t.split(',')
             let tr = newGeoPoint(tp[0],tp[1],tp[2])
             ts.points.push(tr)
         })
-        m.tracks = ts
+        m.tracks.push(ts)
     } else {
         delete m.tracks
     }

@@ -44,24 +44,23 @@ const dataFromModel = (model) => {
     if(!tks) {
         delete ret.gpx.trk
     } else {
-        if(!tks.name) {
-            delete ret.gpx.trk.name
-        } else {
-            ret.gpx.trk.name = xml.commentString(tks.name)
-        }
-        if(!tks.desc) {
-            delete ret.gpx.trk.desc
-        } else {
-            ret.gpx.trk.desc = xml.commentString(tks.desc)
-        }
-        let points = tks.points
+        let ord = 1
+        console.log({tks})
+        tks.forEach(tk => {
+            let track = gpxmod.newTrack(xml.commentString(tk.name),xml.commentString(tk.desc),[],ord)
+            let points = tk.points
 
-        points.forEach(p => {
-            //console.log(p)
-            let tp = gpxmod.newTrackPoint(p[0], p[1], p[2])
-            //console.log(tp)
-            ret.gpx.trk.trkseg.trkpt.push(tp)
+            points.forEach(p => {
+                //console.log(p)
+                let tp = gpxmod.newTrackPoint(p[0], p[1], p[2])
+                //console.log(tp)
+                track.trkseg.trkpt.push(tp)
+            })
+            ret.gpx.trk.push(track)
+            ord += 1
         })
+
+        
     }
 
     return common.XMLFromObj(ret)
