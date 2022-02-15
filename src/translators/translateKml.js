@@ -5,7 +5,10 @@ const common = require('../helpers/common')
 const xml = require('../helpers/xml')
 const config = require('../config')
 
-const dataFromModel = (model) => {
+const dataFromModel = (model, options) => {
+    if(!options) {
+        options = mod.newExportOptions()
+    }
     let ret = kmlmod.newKmlModel()
     if(model.name) {
         ret.kml.Document.name = xml.commentString(model.name)
@@ -17,35 +20,41 @@ const dataFromModel = (model) => {
     } else {
         delete ret.kml.Document.description
     }
-    const wpStyleId = 'waypoint'
-    let style = kmlmod.newWaypointStyle(wpStyleId)
-    //console.log({s:style.Style})
-    //ret.kml.Document.Style.push(style.Style.Style)
-    /*
-    ret.kml.Document.StyleMap = style.StyleMap
-    ret.kml.Document.Style = style.Style
-    */
-    ret.kml.Document.StyleMap.push(...style.StyleMap)
-    ret.kml.Document.Style.push(...style.Style)
 
-    model.waypoints.forEach(wp => {
-       let w = kmlmod.newKMLWaypoint(wp.name,wp.desc,wp.point,wpStyleId)
-       ret.kml.Document.Placemark.push(w)
-   })
+    if(!options.onlyTracks) {
+        const wpStyleId = 'waypoint'
+        let style = kmlmod.newWaypointStyle(wpStyleId)
+        //console.log({s:style.Style})
+        //ret.kml.Document.Style.push(style.Style.Style)
+        /*
+        ret.kml.Document.StyleMap = style.StyleMap
+        ret.kml.Document.Style = style.Style
+        */
 
-   let nr = 1
-    model.tracks.forEach(tr => {
-        if(tr.points.length > 0) {
-            const trStyleId = `waytogo_${nr}`
-            let tstyle = kmlmod.newTrackStyle(trStyleId,'Red')
-            ret.kml.Document.StyleMap.push(...tstyle.StyleMap)
-            ret.kml.Document.Style.push(...tstyle.Style)
-            
-            let pt = kmlmod.newKMLTrack(tr.name,tr.desc,tr.points,trStyleId)
-            ret.kml.Document.Placemark.push(pt)
-            nr++
-        }
-    })
+        ret.kml.Document.StyleMap.push(...style.StyleMap)
+        ret.kml.Document.Style.push(...style.Style)
+
+        model.waypoints.forEach(wp => {
+            let w = kmlmod.newKMLWaypoint(wp.name,wp.desc,wp.point,wpStyleId)
+            ret.kml.Document.Placemark.push(w)
+        })
+    }
+    
+    if(!options.onlyWaypoints) {
+        let nr = 1
+        model.tracks.forEach(tr => {
+            if(tr.points.length > 0) {
+                const trStyleId = `waytogo_${nr}`
+                let tstyle = kmlmod.newTrackStyle(trStyleId,'Red')
+                ret.kml.Document.StyleMap.push(...tstyle.StyleMap)
+                ret.kml.Document.Style.push(...tstyle.Style)
+                
+                let pt = kmlmod.newKMLTrack(tr.name,tr.desc,tr.points,trStyleId)
+                ret.kml.Document.Placemark.push(pt)
+                nr++
+            }
+        })
+    }
     return common.XMLFromObj(ret)
 }
 

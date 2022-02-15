@@ -5,7 +5,10 @@ const common = require('../helpers/common')
 const {parseDate} = require('../helpers/date')
 const xml = require('../helpers/xml')
 
-const dataFromModel = (model) => {
+const dataFromModel = (model, options) => {
+    if(!options) {
+        options = mod.newExportOptions()
+    }
     let ret= gpxmod.newGpxModel()
     //console.log(model)
     if(model.name) {
@@ -30,37 +33,43 @@ const dataFromModel = (model) => {
     } else {
         delete ret.gpx.metadata.time
     }
-    let wps = model.waypoints
-    if(!wps || wps.length === 0) {
-        delete ret.gpx.wp
-    } else {
-        wps.forEach(w => {
-            let wp = gpxmod.newWayPoint(w.point[0], w.point[1], w.point[2], w.name)
-            ret.gpx.wpt.push(wp)
-        })
+    if(!options.onlyTracks) {
+        let wps = model.waypoints
+        if(!wps || wps.length === 0) {
+            delete ret.gpx.wp
+        } else {
+            wps.forEach(w => {
+                let wp = gpxmod.newWayPoint(w.point[0], w.point[1], w.point[2], w.name)
+                ret.gpx.wpt.push(wp)
+            })
+        }
     }
  
-    let tks = model.tracks
-    if(!tks) {
-        delete ret.gpx.trk
-    } else {
-        let ord = 1
-        //console.log({tks})
-        tks.forEach(tk => {
-            let track = gpxmod.newTrack(xml.commentString(tk.name),xml.commentString(tk.desc),[],ord)
-            let points = tk.points
+    if(!options.onlyWaypoints) {
+        let tks = model.tracks
+        if(!tks) {
+            delete ret.gpx.trk
+        } else {
+            let ord = 1
+            //console.log({tks})
+            tks.forEach(tk => {
+                let track = gpxmod.newTrack(xml.commentString(tk.name),xml.commentString(tk.desc),[],ord)
+                let points = tk.points
 
-            points.forEach(p => {
-                //console.log(p)
-                let tp = gpxmod.newTrackPoint(p[0], p[1], p[2])
-                //console.log(tp)
-                track.trkseg.trkpt.push(tp)
+                if(options.optimizationLevel !== mod.optimizationLevel.lossless) {
+                    points = mod.optimizePointArray(points, options.optimizationLevel)
+                }
+
+                points.forEach(p => {
+                    //console.log(p)
+                    let tp = gpxmod.newTrackPoint(p[0], p[1], p[2])
+                    //console.log(tp)
+                    track.trkseg.trkpt.push(tp)
+                })
+                ret.gpx.trk.push(track)
+                ord += 1
             })
-            ret.gpx.trk.push(track)
-            ord += 1
-        })
-
-        
+        }
     }
 
     return common.XMLFromObj(ret)

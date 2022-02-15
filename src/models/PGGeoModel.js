@@ -2,7 +2,9 @@ const xml_help = require('../helpers/xml')
 const common = require('../helpers/common')
 const jsscompress = require("js-string-compression")
 const zip = new jsscompress.Hauffman()
-const accuracy = 100000
+const accuracy = 100000 // for compression
+const bearingDegreesLimit = 10
+const met = require('../helpers/geometrics')
 
 const EnumGeoPoint =  {
     lat:0,
@@ -124,7 +126,7 @@ const PGGeoFromGPX = (gO) => {
 const PGGeoFromKML = (gO) => {
     gO = gO.kml.Document
     let m = newGeoModel()
-    
+
     m.name = gO.name
     m.desc = gO.description
     delete m.timestamp
@@ -196,6 +198,7 @@ const compressPointArray = (points) =>  {
         ret += '|'
        
     })
+    console.log({ret})
     const compressed = zip.compress(ret)
     let buff = Buffer.from(compressed);
     let base64data = buff.toString('base64');
@@ -208,8 +211,10 @@ const deCompressPointArray = (compressedPoints) =>  {
     let ret = []
     const pointStr = zip.decompress(compPoints)
     const pointStrArr = pointStr.split('|')
+    
     let first = undefined
     pointStrArr.forEach((ps) => {
+        console.log(ps)
         const pp = ps.split(',')
         let point = []
         if(!first){
@@ -218,6 +223,10 @@ const deCompressPointArray = (compressedPoints) =>  {
         } else {
             let latO = Math.round( ((parseFloat(pp[EnumGeoPoint.lat])/accuracy) + first[EnumGeoPoint.lat])* accuracy) / accuracy
             let lonO = Math.round( ((parseFloat(pp[EnumGeoPoint.lon])/accuracy) + first[EnumGeoPoint.lon])* accuracy) / accuracy
+            if(isNaN(lonO)) {
+                console.log('NaN')
+                console.log({pp,first})// missmatch
+            } 
             let eleO = parseInt(pp[EnumGeoPoint.ele]) + first[EnumGeoPoint.ele] || undefined  
             let timeO = parseInt(pp[EnumGeoPoint.time] + first[EnumGeoPoint.time])  || undefined 
             point = newGeoPoint(latO,lonO,eleO,timeO)
@@ -225,6 +234,84 @@ const deCompressPointArray = (compressedPoints) =>  {
         
         ret.push(point)
     })
+    return ret
+}
+
+const optimizationLevel = {
+    lossless:0,
+    soft: 1,    // at least 1m between points 
+    medium: 2,  // at least 3m between points  
+    hard: 3     // at least 5m between points and more than 5 degrees bearing diffrence
+}
+
+const exportOptions = {
+    onlyWaypoints: false,
+    onlyTracks: false,
+    optimizationLevel: optimizationLevel.lossless,
+    trailColors:[],
+    waypointStyle: {}
+}
+
+const newExportOptions = () => {
+    return common.deepCopy(exportOptions)
+}
+    
+const optimizePointArray = (points, level) => { 
+    console.log(`Optimizing ${points.length} points - level ${Object.keys(optimizationLevel)[level]}`)
+    if(!level || level === optimizationLevel.lossless) {
+        return points
+    }
+
+    let meterLimit = 0
+    switch(level) {
+        case optimizationLevel.soft:
+            meterLimit = 0.5
+            break
+        case optimizationLevel.medium:
+            meterLimit = 1.0
+            break   
+        case optimizationLevel.hard:
+            meterLimit = 2.0
+            break              
+    }
+
+    let ret = []
+    console.log({count:points.length, level})
+    // Point Angle
+    for(let i=1; i<points.length-1; i++) {
+        if(i === 1 || i === points.length-2) {
+            ret.push(points[i])
+            continue
+        }
+        const cBefore = met.newCoordinate(points[i-1][0],points[i-1][1])
+        const cCurrent = met.newCoordinate(points[i][0],points[i][1])
+        const cAfter = met.newCoordinate(points[i+1][0],points[i+1][1])
+        const b1 = met.bearing(cBefore,cCurrent)
+        const b2 = met.bearing(cCurrent,cAfter)
+        const currentAngle = met.bearingDiff(b1,b2)
+        if(currentAngle > bearingDegreesLimit && currentAngle < (180.0-bearingDegreesLimit)) {
+            ret.push(points[i])
+        }
+    }
+    if(meterLimit>0) {
+        let lpoints = common.deepCopy(ret)
+        ret = []
+        let cBefore = {}
+        for(let i=1; i<lpoints.length-1; i++) {
+            if(i === 1 || i === lpoints.length-2) {
+                ret.push(lpoints[i])
+                cBefore = met.newCoordinate(lpoints[i][0],lpoints[i][1])
+                continue
+            }
+            const cCurrent = met.newCoordinate(lpoints[i][0],lpoints[i][1])
+            const d1 = met.distanceMeters(cBefore,cCurrent)
+            if(d1 > meterLimit) {
+                ret.push(lpoints[i])
+                cBefore = met.newCoordinate(lpoints[i][0],lpoints[i][1])
+            }
+        }
+    }
+    console.log({count:ret.length})
     return ret
 }
 
@@ -237,6 +324,9 @@ module.exports = {
     newGeoPoint,
     EnumGeoPoint,
     compressPointArray,
-    deCompressPointArray
+    deCompressPointArray,
+    optimizePointArray,
+    optimizationLevel,
+    newExportOptions
 }
 

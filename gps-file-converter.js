@@ -98,7 +98,7 @@ class PGGeo {
         })
     }
 
-    stringify = async (type) => {
+    stringify = async (type, options) => {
         return new Promise((resolve, reject) => {
             let handler = undefined
             switch(type) {
@@ -114,7 +114,7 @@ class PGGeo {
                     return reject(`No handler available for stringify to format '${type}'`)    
             }
             if(handler && handler.dataFromModel){
-                const data = handler.dataFromModel(content)
+                const data = handler.dataFromModel(content,options)
                 return resolve(data)
             } 
             return reject(`Handler for stringify to format '${type}' not implemented`)
@@ -131,8 +131,8 @@ class PGGeo {
             content = d
         })
     }
-    exportGPX = (filePath) => {
-        let c = transGpx.dataFromModel(content)
+    exportGPX = (filePath, options) => {
+        let c = transGpx.dataFromModel(content, options)
         return exportFile(filePath, c)
     }
 
@@ -147,8 +147,8 @@ class PGGeo {
             content = d
         })
     }
-    exportKML = (filePath) => {
-        let c = transKml.dataFromModel(content)
+    exportKML = (filePath, options) => {
+        let c = transKml.dataFromModel(content, options)
         return exportFile(filePath, c)
     }
 
@@ -164,8 +164,8 @@ class PGGeo {
         })
     }
 
-    exportGeoJSON = (filePath) => {
-        let c = transGeo.dataFromModel(content)
+    exportGeoJSON = (filePath, options) => {
+        let c = transGeo.dataFromModel(content, options)
         return exportFile(filePath, c)
     }
 
@@ -190,13 +190,13 @@ class PGGeo {
         })
     }
 
-    exportPGT = (filePath) => {
-        let c = transPgt.dataFromModel(content, true)
+    exportPGT = (filePath, options) => {
+        let c = transPgt.dataFromModel(content, options, true)
         return exportFile(filePath, c)
     }
-    exportPGTZ = (filePath) => {
+    exportPGTZ = (filePath, options) => {
         let fname = path.basename(filePath.toLowerCase(),'.zip') + '.pgt'
-        let c = transPgt.dataFromModel(content, true)
+        let c = transPgt.dataFromModel(content, options, true)
         return exportFileCompressed(filePath, fname, c)
     }
     

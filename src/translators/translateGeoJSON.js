@@ -1,13 +1,16 @@
 const common = require('../helpers/common')
 const pgmodel = require('../models/PGGeoModel')
 
-const dataFromModel = (model) => {
+const dataFromModel = (model, options) => {
+    if(!options) {
+        options = mod.newExportOptions()
+    }
     //console.log({model})
     let ret = {
         type: 'FeatureCollection'
     }
     let features = []
-    if(model.waypoints) {
+    if(model.waypoints && !options.onlyTracks) {
         model.waypoints.forEach(wp => {
             //console.log(wp)
             let w = {
@@ -25,7 +28,7 @@ const dataFromModel = (model) => {
             features.push(w)
         })
     }
-    if(model.tracks) {
+    if(model.tracks && !options.onlyWaypoints) {
         model.tracks.forEach(tr => {
             let tf = {
                 type: 'Feature',
