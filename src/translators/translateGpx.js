@@ -45,7 +45,7 @@ const dataFromModel = (model) => {
         delete ret.gpx.trk
     } else {
         let ord = 1
-        console.log({tks})
+        //console.log({tks})
         tks.forEach(tk => {
             let track = gpxmod.newTrack(xml.commentString(tk.name),xml.commentString(tk.desc),[],ord)
             let points = tk.points

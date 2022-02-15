@@ -20,7 +20,6 @@ const kml_meta = {
     }
 }
 
-
 const config = {
     program:{
         name: 'gps-file-converter',

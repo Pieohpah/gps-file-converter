@@ -98,28 +98,25 @@ const PGGeoFromGPX = (gO) => {
             let wp = newGeoWaypoint(e.name,undefined,p)
             m.waypoints.push(wp)
         })
-    } else {
-        delete m.waypoints
     }
 
     // Tracks
     if(gO.trk) {
         let ord = 1
+        if(!gO.trk.length){
+            gO.trk = [gO.trk]
+        }
+
         gO.trk.forEach(trk => {
             let ts = newGeoTrack(trk.name, trk.desc, [], ord)
-            //console.log({tr:trk})
             trk.trkseg.trkpt.forEach(t => {
-                //console.log(t)
                 let tr = newGeoPoint(t['@_lat'],t['@_lon'],t.ele)
                 ts.points.push(tr)
             })
             m.tracks.push(ts)
             ord += 1
-        })
-        
-    } else {
-        delete m.tracks
-    }
+        }) 
+    } 
 
     return m
 }
@@ -127,38 +124,42 @@ const PGGeoFromGPX = (gO) => {
 const PGGeoFromKML = (gO) => {
     gO = gO.kml.Document
     let m = newGeoModel()
-    //console.log(gO)
-    m.name = gO.Placemark.name
-    m.desc = gO.Placemark.description
-    delete m.timestamp
     
-    // Waypoints 
-    //TODO: later
-    if(gO.wpt){
-        gO.wpt.forEach(e => {
-            let p = newGeoPoint(e['@_lat'],e['@_lon'],e.ele,new Date(e.time).getTime())
-            let wp = newGeoWaypoint(e.name,undefined,p)
+    m.name = gO.name
+    m.desc = gO.description
+    delete m.timestamp
+
+    if(!gO.Placemark) {
+        gO.Placemark = gO.Folder[0].Placemark //TODO: maybe not just the first
+    }
+    if(!gO.Placemark) {
+        gO.Placemark = []
+    }
+    if(!gO.Placemark.length){
+        gO.Placemark = [gO.Placemark]
+    } 
+    
+    gO.Placemark.forEach(pm => {
+        // Waypoints 
+        if(pm.Point){
+            let coord = pm.Point.coordinates.split(',')
+            let p = newGeoPoint(coord[1],coord[0],coord[2],undefined)
+            let wp = newGeoWaypoint(pm.name,pm.description,p)
             m.waypoints.push(wp)
-        })
-    } else {
-        delete m.waypoints
-    }
+        } 
 
-    // Tracks
-    if(gO.Placemark.LineString) {
-        //console.log(gO.Placemark.LineString.coordinates)
-        //TODO: forEach
-        let ts = newGeoTrack(m.name, m.desc, [])
-        gO.Placemark.LineString.coordinates.split('\n').forEach(t => {
-            let tp = t.split(',')
-            let tr = newGeoPoint(tp[0],tp[1],tp[2])
-            ts.points.push(tr)
-        })
-        m.tracks.push(ts)
-    } else {
-        delete m.tracks
-    }
-
+        // Tracks
+        if(pm.LineString) {
+            let ts = newGeoTrack(pm.name, pm.description, [])
+            pm.LineString.coordinates.split('\n').forEach(t => {
+                let tp = t.split(',')
+                let tr = newGeoPoint(tp[1],tp[0],tp[2])
+                ts.points.push(tr)
+            })
+            m.tracks.push(ts)
+        } 
+    })
+    //console.log(JSON.stringify(m))
     return m
 }
 
@@ -167,7 +168,6 @@ const compressPointArray = (points) =>  {
     let first = undefined
     let latO = lonO = eleO = timeO = 0
     points.forEach(t => {
-        //console.log(t)
         if(!first) {
             latO = t[EnumGeoPoint.lat]
             lonO = t[EnumGeoPoint.lon]

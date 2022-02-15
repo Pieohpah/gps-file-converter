@@ -1,12 +1,12 @@
-const GFC = require('./gps-file-converter')
+const GFC = require('../gps-file-converter')
 const geo = new GFC()
-const model = require('./src/models/PGGeoModel')
-const gpxmod = require('./src/models/GPXModel')
-const tpg = require('./src/translators/translatePgt')
-const ft = require('./src/helpers/fileinfo')
-const common = require('./src/helpers/common')
+const model = require('../src/models/PGGeoModel')
+const gpxmod = require('../src/models/GPXModel')
+const tpg = require('../src/translators/translatePgt')
+const ft = require('../src/helpers/fileinfo')
+const common = require('../src/helpers/common')
 
-const xmlTool = require('./src/helpers/xml')
+const xmlTool = require('../src/helpers/xml')
 
 const t = async() => {
 /*

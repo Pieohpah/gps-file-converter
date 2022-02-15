@@ -14,7 +14,7 @@ const dataFromModel = (model) => {
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
-                    coordinates: [wp.point[0],wp.point[1]]
+                    coordinates: [wp.point[1],wp.point[0]]
                 },
                 properties: {
                     name: wp.name,
@@ -26,23 +26,27 @@ const dataFromModel = (model) => {
         })
     }
     if(model.tracks) {
-        let tf = {
-            type: 'Feature',
-            geometry: {
-                type: 'LineString',
-            },
-            properties: {
-                name: model.tracks.name,
-                desc: model.tracks.desc
+        model.tracks.forEach(tr => {
+            let tf = {
+                type: 'Feature',
+                geometry: {
+                    type: 'LineString',
+                },
+                properties: {
+                    name: tr.name,
+                    desc: tr.desc
+                }
             }
-        }
-        let coordinates = []
-        model.tracks.points.forEach(p => {
-            let np = [p[1],p[0]]
-            coordinates.push(np)
-        })
-        tf.geometry.coordinates = coordinates
-        features.push(tf)
+            let coordinates = []
+                tr.points.forEach(p => {
+                    let np = [p[1],p[0]]
+                    coordinates.push(np)
+                })
+                tf.geometry.coordinates = coordinates
+                features.push(tf)
+
+            
+            })
     }
     ret.features = features
 
@@ -64,14 +68,14 @@ const parseData = async(data) => {
             let content = pgmodel.newGeoModel()
             gpsContent.features.forEach(f => {
                 if(f.geometry && f.geometry.type === 'Point') {
-                    console.log('Create waypoint')
+                    //console.log('Create waypoint')
                     const coord = f.geometry.coordinates[0]
                     let p = pgmodel.newGeoPoint(coord[0], coord[1])
                     let wp = pgmodel.newGeoWaypoint(JSON.stringify(f.properties),'',p)
                     content.waypoints.push(wp)
                 }
                 if(f.geometry && f.geometry.type === 'LineString') {
-                    console.log('Create track')
+                    //console.log('Create track')
                     const coords = f.geometry.coordinates
                     let points = []
                     coords.forEach(p => {

@@ -7,27 +7,45 @@ const config = require('../config')
 
 const dataFromModel = (model) => {
     let ret = kmlmod.newKmlModel()
-    //console.log(model)
     if(model.name) {
         ret.kml.Document.name = xml.commentString(model.name)
     } else (
         delete ret.kml.Document.name
     )
     if(model.desc) {
-        //ret.gpx.metadata.desc = xml.commentString(model.desc)
+        ret.kml.Document.description = xml.commentString(model.desc)
     } else {
-        //delete ret.gpx.metadata.desc
+        delete ret.kml.Document.description
     }
-    //console.log(model.tracks.points)
-    if(model.tracks.points.length > 0) {
-        console.dir({t: model.tracks})
-        ret.kml.Document.Style['@_id'] = config.kml.default.LineStyleId
-        ret.kml.Document.Style.LineStyle = config.kml.default.LineStyle
-        
-        let pt = kmlmod.newKMLPlacemark(model.tracks.name,model.tracks.desc,model.tracks.points)
-        ret.kml.Document.Placemark = pt
-    }
+    const wpStyleId = 'waypoint'
+    let style = kmlmod.newWaypointStyle(wpStyleId)
+    //console.log({s:style.Style})
+    //ret.kml.Document.Style.push(style.Style.Style)
+    /*
+    ret.kml.Document.StyleMap = style.StyleMap
+    ret.kml.Document.Style = style.Style
+    */
+    ret.kml.Document.StyleMap.push(...style.StyleMap)
+    ret.kml.Document.Style.push(...style.Style)
 
+    model.waypoints.forEach(wp => {
+       let w = kmlmod.newKMLWaypoint(wp.name,wp.desc,wp.point,wpStyleId)
+       ret.kml.Document.Placemark.push(w)
+   })
+
+   let nr = 1
+    model.tracks.forEach(tr => {
+        if(tr.points.length > 0) {
+            const trStyleId = `waytogo_${nr}`
+            let tstyle = kmlmod.newTrackStyle(trStyleId,'Red')
+            ret.kml.Document.StyleMap.push(...tstyle.StyleMap)
+            ret.kml.Document.Style.push(...tstyle.Style)
+            
+            let pt = kmlmod.newKMLTrack(tr.name,tr.desc,tr.points,trStyleId)
+            ret.kml.Document.Placemark.push(pt)
+            nr++
+        }
+    })
     return common.XMLFromObj(ret)
 }
 
