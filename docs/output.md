@@ -3,7 +3,7 @@
 ## Output methods
 You can output geo data in two ways: To file or to string.
 
-- exportGPX, exportKML, exportGeoJSON: exports geo data to a file from disk
+- exportGPX, exportKML, exportGeoJSON: exports geo data to a file on disk
 - stringify: outputs a string of the content of the corresponding format
 
 ### Examples
@@ -25,5 +25,5 @@ gfc.stringify(type, options)
 ```
 ## Parameters
 - filePath: path with filename of the exported geo data
-- options: Read more [here](options.md)
+- options: ( *Optional* ) Read more [here](options.md)
 - type: can be 'gpx', 'kml' or 'json'

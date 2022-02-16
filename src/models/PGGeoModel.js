@@ -255,7 +255,7 @@ const newExportOptions = () => {
 }
     
 const optimizePointArray = (points, level) => { 
-    console.log(`Optimizing ${points.length} points - level ${Object.keys(optimizationLevel)[level]}`)
+    //console.log(`Optimizing ${points.length} points - level ${Object.keys(optimizationLevel)[level]}`)
     if(!level || level === optimizationLevel.lossless) {
         return points
     }
@@ -311,7 +311,7 @@ const optimizePointArray = (points, level) => {
             }
         }
     }
-    console.log({count:ret.length})
+    //console.log({count:ret.length})
     return ret
 }
 

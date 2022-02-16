@@ -74,22 +74,6 @@ const distanceMeters = (fromCoord, toCoord) => {
     return d
 }
 
-/*
-
- public func bearing(to: CLLocation) -> Double {
-        let c1 = self.coordinate
-        let c2 = to.coordinate
-        
-        let x = cos(c2.latitude.radianValue) * sin((c2.longitude - c1.longitude).radianValue)
-        let y = cos(c1.latitude.radianValue) * sin(c2.latitude.radianValue) - sin(c1.latitude.radianValue) * cos(c2.latitude.radianValue) * cos((c2.longitude - c1.longitude).radianValue)
-        
-        let bearing = atan2(x,y) * 180 / Double.pi
-        return bearing
-    }
-}
-
-*/
-
 module.exports = {
     newCoordinate,
     bearing,

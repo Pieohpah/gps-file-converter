@@ -2,6 +2,7 @@
 
 ## About
 gps-file-converter is a nodejs module that imports and exports geolocation files and strings.
+gps-file-converter is asynchronous when needed.
 
 Supported formats are .gpx, .kml and GeoJSON
 
@@ -37,11 +38,11 @@ gfc.importGeoFile('in.gpx')
 Then you can for example export it as a .kml-file, out.kml
 
 ```javascript
-gfc.exportKML('out.kml',options)
-    .then(async() => {
-        console.log('Saved to disk')
-    })
-    .catch(e => {console.log(e)})
+gfc.exportKML('out.kml')
+.then(async() => {
+    console.log('Saved to disk')
+})
+.catch(e => {console.log(e)})
 ```
 
 ## Documentation
