@@ -1,7 +1,7 @@
 {
   "name": "gps-file-converter",
   "version": "1.0.0",
-  "description": "Imports and exports: Garmin .gpx, Google Maps .kml, GeoJSON and PlaceGaze .pgt",
+  "description": "Imports and exports: Garmin .gpx, Google Maps .kml and GeoJSON",
   "author": "Peter Herber",
   "license": "ISC",
   "main": "index.js",
