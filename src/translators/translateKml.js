@@ -24,12 +24,6 @@ const dataFromModel = (model, options) => {
     if(!options.onlyTracks) {
         const wpStyleId = 'waypoint'
         let style = kmlmod.newWaypointStyle(wpStyleId)
-        //console.log({s:style.Style})
-        //ret.kml.Document.Style.push(style.Style.Style)
-        /*
-        ret.kml.Document.StyleMap = style.StyleMap
-        ret.kml.Document.Style = style.Style
-        */
 
         ret.kml.Document.StyleMap.push(...style.StyleMap)
         ret.kml.Document.Style.push(...style.Style)

@@ -39,12 +39,10 @@ const getFileHash =  (fileStr) => {
 
 const asyncForEach = async (array, handlerfunction) => {
     return new Promise(async (resolve,reject) => {
-      //console.log('asyncForEach')
       if(array) {
         for (let index = 0; index < array.length; index++) {
             await handlerfunction(array[index], index, array)
             if(index === array.length -1) {
-                //console.log('resolve at index ' + index)
                 return resolve()
             }
         }

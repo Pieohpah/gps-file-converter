@@ -10,7 +10,6 @@ const dataFromModel = (model, options) => {
         options = mod.newExportOptions()
     }
     let ret= gpxmod.newGpxModel()
-    //console.log(model)
     if(model.name) {
         ret.gpx.metadata.name = xml.commentString(model.name)
     } else (
@@ -51,7 +50,6 @@ const dataFromModel = (model, options) => {
             delete ret.gpx.trk
         } else {
             let ord = 1
-            //console.log({tks})
             tks.forEach(tk => {
                 let track = gpxmod.newTrack(xml.commentString(tk.name),xml.commentString(tk.desc),[],ord)
                 let points = tk.points
@@ -61,9 +59,7 @@ const dataFromModel = (model, options) => {
                 }
 
                 points.forEach(p => {
-                    //console.log(p)
                     let tp = gpxmod.newTrackPoint(p[0], p[1], p[2])
-                    //console.log(tp)
                     track.trkseg.trkpt.push(tp)
                 })
                 ret.gpx.trk.push(track)
@@ -80,23 +76,17 @@ const parseData = async(data) => {
         let content = {}
         let gpsContent = undefined
         if(typeof data === 'string'){
-            //console.log(111)
             const options = {
                 ignoreAttributes : false,
-                //cdataPropName: '__cdata'
             }
             const parser = new XMLParser(options)
             gpsContent = parser.parse(data)
         } else {
-            //console.log(222 + ' - ' + typeof data)
-            //console.log(data)
             gpsContent = data
         }
-        //console.log({c:gpsContent.gpx.trk.trkseg.trkpt[0]})
         
         if(gpsContent) {
             content = mod.PGGeoFromGPX(gpsContent)
-            //console.log({c:content.tracks.points})
             return resolve(content)
         } else {
             return reject('Data could not be parsed')

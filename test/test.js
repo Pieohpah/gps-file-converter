@@ -53,10 +53,12 @@ const t = async() => {
     //s = xmlTool.deCommentString(s)
     //console.log(s)
 
-    geo.importGeoFile('./Files/out/tall2.pgt','./Files/TrackNWaypointGpx.gpx') // eller pg.parseGPX om man har strängen ./Files/S.gpx ./Files/out/ralle2.pgt
+    //geo.importGeoFile('./Files/S.gpx') //,'./Files/TrackNWaypointGpx.gpx') // eller pg.parseGPX om man har strängen ./Files/S.gpx ./Files/out/ralle2.pgt
+    geo.importGeoFile('./Files/out/tall3.pgt')
     .then(async(c) => {
         console.log(c)
-        let options = model.newExportOptions()
+        let options = geo.newExportOptions()
+        options.useCompression=true
         //options.optimizationLevel = model.optimizationLevel.hard
         //console.log(
             //await geo.stringify('gpx',options)
@@ -68,7 +70,11 @@ const t = async() => {
         //let ps = model.optimizePointArray(geo.getContent().tracks[0].points,1)
         //console.log({ps})
         //geo.exportPGT('./Files/out/tall.pgt')
-       geo.exportGPX('./Files/out/tall3.gpx',options)
+        //console.log(await geo.stringify('pgt',options))
+
+        geo.exportGPX('./Files/out/tall3.gpx',options)
+       //geo.exportPGT('./Files/out/tall3.pgt',options)
+
         //geo.exportKML('./Files/out/tall.kml')
         /*
         let compressed = model.compressPointArray(tps)

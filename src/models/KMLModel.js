@@ -158,11 +158,6 @@ const newKMLWaypoint = (name, desc, point, styleId) => {
 const newKmlModel = () => {
     let ret = common.deepCopy(KmlModel)
     const meta = config.kml
-    //console.log(meta)
-    /*Object.keys(meta).forEach(key => {
-        ret.kml[`@_${key}`] = meta[key]
-    })*/
-
     return ret
 }
 

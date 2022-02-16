@@ -37,7 +37,6 @@ const getFileData = (data, filename_extension) => {
         format:'',
         data: undefined
     }
-    //console.log(dataStr.toString().substr(0,4))
 
     let gpsContent = {}
 
@@ -61,7 +60,6 @@ const getFileData = (data, filename_extension) => {
         const dataStr = data.toString()
         ret.format = 'json'
         gpsContent = JSON.parse(dataStr)
-        //console.log(dataStr)
         if(gpsContent.type && gpsContent.type === filetypes.pgt.ext) {
             ret.ext = filetypes.pgt.ext
             ret.desc = filetypes.pgt.desc

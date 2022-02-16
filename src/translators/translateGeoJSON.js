@@ -5,14 +5,12 @@ const dataFromModel = (model, options) => {
     if(!options) {
         options = mod.newExportOptions()
     }
-    //console.log({model})
     let ret = {
         type: 'FeatureCollection'
     }
     let features = []
     if(model.waypoints && !options.onlyTracks) {
         model.waypoints.forEach(wp => {
-            //console.log(wp)
             let w = {
                 type: 'Feature',
                 geometry: {
@@ -24,7 +22,6 @@ const dataFromModel = (model, options) => {
                     desc: wp.desc
                 }
             }
-            //console.log(w)
             features.push(w)
         })
     }
@@ -71,14 +68,12 @@ const parseData = async(data) => {
             let content = pgmodel.newGeoModel()
             gpsContent.features.forEach(f => {
                 if(f.geometry && f.geometry.type === 'Point') {
-                    //console.log('Create waypoint')
                     const coord = f.geometry.coordinates[0]
                     let p = pgmodel.newGeoPoint(coord[0], coord[1])
                     let wp = pgmodel.newGeoWaypoint(JSON.stringify(f.properties),'',p)
                     content.waypoints.push(wp)
                 }
                 if(f.geometry && f.geometry.type === 'LineString') {
-                    //console.log('Create track')
                     const coords = f.geometry.coordinates
                     let points = []
                     coords.forEach(p => {

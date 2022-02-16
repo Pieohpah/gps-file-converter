@@ -6,6 +6,7 @@ const transGeo = require('./src/translators/translateGeoJSON')
 const admzip = require('adm-zip')
 const path = require('path')
 const fi = require('./src/helpers/fileinfo')
+const model = require('./src/models/PGGeoModel')
 
 let content = {}
 let filetype = {}
@@ -13,7 +14,6 @@ let filename_extension = ''
 
 const importFile = async (filePath, handler) => {
     return new Promise((resolve, reject) =>{
-        //console.log(filePath)
         filename_extension = path.extname(filePath)
         getFileContent(filePath)
         .then(c => {
@@ -38,7 +38,6 @@ const getFileContent = async (filePath) => {
 
 const exportFile = async (filePath, contents) => {
     return new Promise((resolve, reject) =>{
-        //console.log(filePath)
         fs.writeFile(filePath,contents)
         .then(c => {
             return resolve()
@@ -68,7 +67,6 @@ class PGGeo {
                     desc: fileinfo.desc,
                     format:fileinfo.format,
                 }
-                //console.log(filetype)
                 let handler = undefined
 
                 switch(fileinfo.ext) {
@@ -171,7 +169,6 @@ class PGGeo {
 
     // PlaceGaze files
     importPGT = (filePath) => {
-        //console.log(filePath)
         return importFile(filePath,this.parsePGT)
     }
     importPGTZ = (filePath) => {
@@ -199,6 +196,12 @@ class PGGeo {
         let c = transPgt.dataFromModel(content, options, true)
         return exportFileCompressed(filePath, fname, c)
     }
+
+    newExportOptions = () => {
+        return model.newExportOptions()
+    }
+
+    optimizationLevel = model.optimizationLevel
     
     getContent = () => {
         return content

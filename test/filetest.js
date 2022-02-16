@@ -52,15 +52,12 @@ const testFiles = async (type) => {
         console.log(`--- Testing ${k}`)
         asyncForEach(infiles[k], async (fn) => {
             let fileBase = path.basename(fn, path.extname(fn))
-            //console.log(fileBase)
             let infilepath = `${infile_path}/${fn}`
             console.log(`Testing ${infilepath}`)
             geo.importGeoFile(infilepath)
             .then(async(c) => {
-               // console.log(c)
                 output.forEach(o => {
                     const o_fn = `${outfile_path}/${fileBase}.${o.format}`
-                    //console.log(o_fn)
                     o.handler(o_fn)
                 })
             })

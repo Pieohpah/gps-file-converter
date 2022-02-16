@@ -161,7 +161,6 @@ const PGGeoFromKML = (gO) => {
             m.tracks.push(ts)
         } 
     })
-    //console.log(JSON.stringify(m))
     return m
 }
 
@@ -198,7 +197,6 @@ const compressPointArray = (points) =>  {
         ret += '|'
        
     })
-    console.log({ret})
     const compressed = zip.compress(ret)
     let buff = Buffer.from(compressed);
     let base64data = buff.toString('base64');
@@ -214,7 +212,9 @@ const deCompressPointArray = (compressedPoints) =>  {
     
     let first = undefined
     pointStrArr.forEach((ps) => {
-        console.log(ps)
+        if(ps === '') { // last one is empty
+            return
+        }
         const pp = ps.split(',')
         let point = []
         if(!first){
@@ -223,10 +223,6 @@ const deCompressPointArray = (compressedPoints) =>  {
         } else {
             let latO = Math.round( ((parseFloat(pp[EnumGeoPoint.lat])/accuracy) + first[EnumGeoPoint.lat])* accuracy) / accuracy
             let lonO = Math.round( ((parseFloat(pp[EnumGeoPoint.lon])/accuracy) + first[EnumGeoPoint.lon])* accuracy) / accuracy
-            if(isNaN(lonO)) {
-                console.log('NaN')
-                console.log({pp,first})// missmatch
-            } 
             let eleO = parseInt(pp[EnumGeoPoint.ele]) + first[EnumGeoPoint.ele] || undefined  
             let timeO = parseInt(pp[EnumGeoPoint.time] + first[EnumGeoPoint.time])  || undefined 
             point = newGeoPoint(latO,lonO,eleO,timeO)
@@ -239,15 +235,17 @@ const deCompressPointArray = (compressedPoints) =>  {
 
 const optimizationLevel = {
     lossless:0,
-    soft: 1,    // at least 1m between points 
+    low: 1,    // at least 1m between points 
     medium: 2,  // at least 3m between points  
-    hard: 3     // at least 5m between points and more than 5 degrees bearing diffrence
+    high: 3,     // at least 5m between points and more than 5 degrees bearing diffrence
+    aggressive: 4
 }
 
 const exportOptions = {
     onlyWaypoints: false,
     onlyTracks: false,
     optimizationLevel: optimizationLevel.lossless,
+    useCompression: true,
     trailColors:[],
     waypointStyle: {}
 }
@@ -264,19 +262,21 @@ const optimizePointArray = (points, level) => {
 
     let meterLimit = 0
     switch(level) {
-        case optimizationLevel.soft:
+        case optimizationLevel.low:
             meterLimit = 0.5
             break
         case optimizationLevel.medium:
             meterLimit = 1.0
             break   
-        case optimizationLevel.hard:
+        case optimizationLevel.high:
             meterLimit = 2.0
-            break              
+            break 
+        case optimizationLevel.aggressive:
+            meterLimit = 3.0
+            break               
     }
 
     let ret = []
-    console.log({count:points.length, level})
     // Point Angle
     for(let i=1; i<points.length-1; i++) {
         if(i === 1 || i === points.length-2) {

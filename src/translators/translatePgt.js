@@ -2,7 +2,7 @@ const admzip = require('adm-zip')
 const common = require('../helpers/common')
 const pgmodel = require('../models/PGGeoModel')
 
-const dataFromModel = (model, options, compressed) => {
+const dataFromModel = (model, options) => {
     if(!options) {
         options = pgmodel.newExportOptions()
     }
@@ -13,15 +13,11 @@ const dataFromModel = (model, options, compressed) => {
     if(options.onlyWaypoints) {
         m.tracks = []
     }
-    if(compressed){
-        //console.log({comp:m.tracks})
+    if(options.useCompression){
         let tps = m.tracks ? m.tracks[0].points : undefined //TODO: Mayby not only the first
-        //console.log(tps)
         if(tps){
             if(options.optimizationLevel !== pgmodel.optimizationLevel.lossless) {
-                //console.log('comp2')
                 tps = pgmodel.optimizePointArray(tps, options.optimizationLevel)
-                //console.log({tps:tps.length})
             }
             let compressed = pgmodel.compressPointArray(tps)
             m.tracks[0].points = compressed
