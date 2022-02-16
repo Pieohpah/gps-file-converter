@@ -46,9 +46,9 @@ gfc.exportKML('out.kml')
 ```
 
 ## Documentation
-- [Input methods](docs/input.md)
-- [Output methods](docs/output.md)
-- [Export options](docs/options.md)
+- [Input methods](https://github.com/Pieohpah/gps-file-converter/blob/main/docs/input.md)
+- [Output methods](https://github.com/Pieohpah/gps-file-converter/blob/main/docs/output.md)
+- [Export options](https://github.com/Pieohpah/gps-file-converter/blob/main/docs/options.md)
 
 ## Disclaimer
 gps-file-converter only supports waypoints, tracks and metadata concerning that.
