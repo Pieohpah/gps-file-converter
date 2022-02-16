@@ -7,8 +7,8 @@
   "keywords":["gps","gpx","kml","geojson","converter","geo"],
   "main": "gps-file-converter.js",
   "scripts": {
-    "test": "nodemon test/test.js -i ./Files/",
-    "testfiles": "nodemon test/filetest.js -i ./Files/",
+    "_test": "nodemon test/test.js -i ./Files/",
+    "_testfiles": "nodemon test/filetest.js -i ./Files/",
     "debug": "node test/test.js"
   },
   "devDependencies": {
