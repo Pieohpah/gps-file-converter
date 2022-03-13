@@ -61,7 +61,7 @@ const parseData = async(data) => {
                 ignoreAttributes : false
             }
             const parser = new XMLParser(options)
-            gpsContent = parser.parse(str)
+            gpsContent = parser.parse(data)
         } else {
             gpsContent = data
         }

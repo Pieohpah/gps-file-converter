@@ -31,6 +31,7 @@ const PGGeoModel = {
     version: '1.0.0',
     name: '',
     desc: '',
+    editable: false,
     link: {
         url:'',
         text:''

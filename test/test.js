@@ -9,6 +9,8 @@ const common = require('../src/helpers/common')
 const xmlTool = require('../src/helpers/xml')
 const met = require('../src/helpers/geometrics')
 
+
+
 const t = async() => {
     /*
     const c1 = met.newCoordinate(59.30275,18.10384)
@@ -34,56 +36,7 @@ const t = async() => {
     console.log(model.optimizePointArray(arr, model.optimizationLevel.lossless))
     return
     */
-/*
-    let m = gpxmod.newGpxModel()
-    let tp = gpxmod.newTrackPoint(59.73,18.56,10)
-    let l = gpxmod.newLink('http://www.garmin.com', 'Garmin International')
-    let wp = gpxmod.newWayPoint(59.346936, 18.050696,8.835917,'Snitz')
-    let wp2 = gpxmod.newWayPoint(59.346936, 18.050696,8.835917,'Kalle')
-    m.gpx.metadata.link = l
-    m.gpx.trk.trkseg.push(tp)
-    m.gpx.wp.push(wp)
-    m.gpx.wp.push(wp2)
-    console.log(common.XMLFromObj(m))
-
-    return
-    */
-    //let s = xmlTool.commentString('Kalle Koala')
-    //console.log(s)
-    //s = xmlTool.deCommentString(s)
-    //console.log(s)
-
-    //geo.importGeoFile('./Files/S.gpx') //,'./Files/TrackNWaypointGpx.gpx') // eller pg.parseGPX om man har strängen ./Files/S.gpx ./Files/out/ralle2.pgt
-    geo.importGeoFile('./Files/out/tall3.pgt')
-    .then(async(c) => {
-        console.log(c)
-        let options = geo.newExportOptions()
-        options.useCompression=true
-        //options.optimizationLevel = model.optimizationLevel.hard
-        //console.log(
-            //await geo.stringify('gpx',options)
-            //)
-        //console.log(await geo.stringify('gpx'))
-        //let tps = pg.getContent().tracks.points
-        //let pgt = tpg.pgtFromModel(pg.getContent(),true)
-        //console.log(geo.getContent())
-        //let ps = model.optimizePointArray(geo.getContent().tracks[0].points,1)
-        //console.log({ps})
-        //geo.exportPGT('./Files/out/tall.pgt')
-        //console.log(await geo.stringify('pgt',options))
-
-        geo.exportGPX('./Files/out/tall3.gpx',options)
-       //geo.exportPGT('./Files/out/tall3.pgt',options)
-
-        //geo.exportKML('./Files/out/tall.kml')
-        /*
-        let compressed = model.compressPointArray(tps)
-        //console.log(compressed)
-        let dec = model.deCompressPointArray(compressed)
-        console.log(dec)
-        */
-    })
-    .catch(e => {console.log(e)})
+    
 }
 t()
 
