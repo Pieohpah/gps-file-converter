@@ -1,6 +1,6 @@
 {
   "name": "gps-file-converter",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Imports and exports: .gpx, .kml and GeoJSON",
   "author": "Peter Herber",
   "license": "ISC",
