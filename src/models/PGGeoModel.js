@@ -96,6 +96,9 @@ const PGGeoFromGPX = (gO) => {
     
     // Waypoints
     if(gO.wpt){
+        if(!gO.wpt.length){
+            gO.wpt = [gO.wpt]
+        }
         gO.wpt.forEach(e => {
             let p = newGeoPoint(e['@_lat'],e['@_lon'],e.ele,new Date(e.time).getTime())
             let wp = newGeoWaypoint(e.name,undefined,p)
