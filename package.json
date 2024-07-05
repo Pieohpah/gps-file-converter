@@ -1,6 +1,6 @@
 {
   "name": "gps-file-converter",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Imports and exports: .gpx, .kml and GeoJSON",
   "author": "Peter Herber",
   "license": "ISC",
@@ -22,11 +22,11 @@
     "test": "echo \"Error: no test specified\""
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "nodemon": "^3.1.4"
   },
   "dependencies": {
-    "adm-zip": "^0.5.9",
-    "fast-xml-parser": ">=4.2.4",
+    "adm-zip": "^0.5.14",
+    "fast-xml-parser": "^4.4.0",
     "js-string-compression": "^1.0.1"
   }
 }

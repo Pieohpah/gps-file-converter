@@ -24,7 +24,7 @@ Create an instance
 const GFC = require('gps-file-converter')
 const gfc = new GFC()
 ```
-Then give it some input with in.gpx, a file of your choise...
+Then give it some input with in.gpx, a file of your choice...
 
 ```javascript
 gfc.importGeoFile('in.gpx')
