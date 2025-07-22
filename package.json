@@ -22,11 +22,11 @@
     "test": "echo \"Error: no test specified\""
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.10"
   },
   "dependencies": {
-    "adm-zip": "^0.5.14",
-    "fast-xml-parser": "^4.4.0",
+    "adm-zip": "^0.5.16",
+    "fast-xml-parser": "^5.2.5",
     "js-string-compression": "^1.0.1"
   }
 }
